@@ -494,26 +494,25 @@
             ctx.fill();
         }
         _fromData(pointGroups, drawCurve, drawDot) {
-            for (const group of pointGroups) {
-                const { points } = group;
-                const pointGroupOptions = this._getPointGroupOptions(group);
-                if (points.length > 1) {
-                    for (let j = 0; j < points.length; j += 1) {
-                        const basicPoint = points[j];
-                        const point = new Point(basicPoint.x, basicPoint.y, basicPoint.pressure, basicPoint.time);
-                        if (j === 0) {
-                            this._reset(pointGroupOptions);
-                        }
-                        const curve = this._addPoint(point, pointGroupOptions);
-                        if (curve) {
-                            drawCurve(curve, pointGroupOptions);
-                        }
+            const newGroup = pointGroups[pointGroups.length - 1];
+            const { points } = newGroup;
+            const pointGroupOptions = this._getPointGroupOptions(newGroup);
+            if (points.length > 1) {
+                for (let j = 0; j < points.length; j += 1) {
+                    const basicPoint = points[j];
+                    const point = new Point(basicPoint.x, basicPoint.y, basicPoint.pressure, basicPoint.time);
+                    if (j === 0) {
+                        this._reset(pointGroupOptions);
+                    }
+                    const curve = this._addPoint(point, pointGroupOptions);
+                    if (curve) {
+                        drawCurve(curve, pointGroupOptions);
                     }
                 }
-                else {
-                    this._reset(pointGroupOptions);
-                    drawDot(points[0], pointGroupOptions);
-                }
+            }
+            else {
+                this._reset(pointGroupOptions);
+                drawDot(points[0], pointGroupOptions);
             }
         }
         toSVG({ includeBackgroundColor = false } = {}) {
