@@ -581,36 +581,39 @@ export default class SignaturePad extends SignatureEventTarget {
     drawCurve: SignaturePad['_drawCurve'],
     drawDot: SignaturePad['_drawDot'],
   ): void {
-    for (const group of pointGroups) {
-      const { points } = group;
-      const pointGroupOptions = this._getPointGroupOptions(group);
+    // for (const group of pointGroups) {
+    //   const { points } = group;
+    //   const pointGroupOptions = this._getPointGroupOptions(group);
+    const newGroup = pointGroups[pointGroups.length - 1]; // Get the latest group
 
-      if (points.length > 1) {
-        for (let j = 0; j < points.length; j += 1) {
-          const basicPoint = points[j];
-          const point = new Point(
-            basicPoint.x,
-            basicPoint.y,
-            basicPoint.pressure,
-            basicPoint.time,
-          );
+    const { points } = newGroup;
+    const pointGroupOptions = this._getPointGroupOptions(newGroup);
+    if (points.length > 1) {
+      for (let j = 0; j < points.length; j += 1) {
+        const basicPoint = points[j];
+        const point = new Point(
+          basicPoint.x,
+          basicPoint.y,
+          basicPoint.pressure,
+          basicPoint.time,
+        );
 
-          if (j === 0) {
-            this._reset(pointGroupOptions);
-          }
-
-          const curve = this._addPoint(point, pointGroupOptions);
-
-          if (curve) {
-            drawCurve(curve, pointGroupOptions);
-          }
+        if (j === 0) {
+          this._reset(pointGroupOptions);
         }
-      } else {
-        this._reset(pointGroupOptions);
 
-        drawDot(points[0], pointGroupOptions);
+        const curve = this._addPoint(point, pointGroupOptions);
+
+        if (curve) {
+          drawCurve(curve, pointGroupOptions);
+        }
       }
+    } else {
+      this._reset(pointGroupOptions);
+
+      drawDot(points[0], pointGroupOptions);
     }
+    //}
   }
 
   public toSVG({ includeBackgroundColor = false }: ToSVGOptions = {}): string {
